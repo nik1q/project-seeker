@@ -12,6 +12,7 @@ public record DuelResource(
     String notDuelAcceptingPersonage,
     String[] expiredDuel,
     String[] declinedDuel,
+    String[] duelCanceledByInitiator,
     String[] finishedDuel,
     String acceptDuelButton,
     String declineDuelButton,

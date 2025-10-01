@@ -22,11 +22,11 @@ public class DeclineDuelExecutor extends ProcessDuelExecutor<DeclineDuel> {
     private final UserService userService;
 
     public DeclineDuelExecutor(
-        GroupUserService groupUserService,
-        DuelService duelService,
-        TelegramSender telegramSender,
-        PersonageService personageService,
-        UserService userService
+            GroupUserService groupUserService,
+            DuelService duelService,
+            TelegramSender telegramSender,
+            PersonageService personageService,
+            UserService userService
     ) {
         super(telegramSender, groupUserService);
         this.duelService = duelService;
@@ -35,18 +35,36 @@ public class DeclineDuelExecutor extends ProcessDuelExecutor<DeclineDuel> {
     }
 
     @Override
-    protected Either<ProcessDuelError, Success> processDuel(DeclineDuel command, GroupTg group, User acceptor) {
+    protected Either<ProcessDuelError, Success> processDuel(DeclineDuel command, GroupTg group, User user) {
         final var duel = duelService.getByIdForce(command.duelId());
-        return duelService.declineDuel(duel, acceptor.personageId())
-            .peek(success -> {
-                final var initiatingPersonage = personageService.getByIdForce(duel.initiatingPersonageId());
-                final var initiatingUser = userService.getByPersonageIdForce(duel.initiatingPersonageId());
-                telegramSender.send(EditMessageTextBuilder.builder()
-                    .chatId(group.id())
-                    .messageId(command.messageId())
-                    .text(DuelLocalization.declinedDuel(group.language(), TgPersonageMention.of(initiatingPersonage, initiatingUser.id())))
-                    .build()
-                );
-            });
+        final var clickerId = user.personageId();
+
+        if (clickerId.equals(duel.initiatingPersonageId())) {
+            return duelService.cancelDuel(duel, clickerId)
+                    .peek(success -> {
+                        final var acceptorPersonage = personageService.getByIdForce(duel.acceptingPersonageId());
+                        final var acceptorUser = userService.getByPersonageIdForce(duel.acceptingPersonageId());
+                        telegramSender.send(EditMessageTextBuilder.builder()
+                                .chatId(group.id())
+                                .messageId(command.messageId())
+                                .text(DuelLocalization.duelCanceledByInitiator(group.language(),
+                                        TgPersonageMention.of(acceptorPersonage, acceptorUser.id())))
+                                .build()
+                        );
+                    });
+        } else {
+            return duelService.declineDuel(duel, clickerId)
+                    .peek(success -> {
+                        final var initiatingPersonage = personageService.getByIdForce(duel.initiatingPersonageId());
+                        final var initiatingUser = userService.getByPersonageIdForce(duel.initiatingPersonageId());
+                        telegramSender.send(EditMessageTextBuilder.builder()
+                                .chatId(group.id())
+                                .messageId(command.messageId())
+                                .text(DuelLocalization.declinedDuel(group.language(),
+                                        TgPersonageMention.of(initiatingPersonage, initiatingUser.id())))
+                                .build()
+                        );
+                    });
+        }
     }
 }

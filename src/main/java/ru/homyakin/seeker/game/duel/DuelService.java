@@ -106,6 +106,26 @@ public class DuelService {
         );
     }
 
+    public Either<ProcessDuelError, Success> cancelDuel(Duel duel, PersonageId initiator) {
+        if (!initiator.equals(duel.initiatingPersonageId())) {
+            return Either.left(ProcessDuelError.NotDuelInitiator.INSTANCE);
+        }
+        return lockService.<Either<ProcessDuelError, Success>>tryLockAndCalc(
+                duelLockKey(duel.id()),
+                () -> {
+                    if (duel.isFinalStatus()) {
+                        return Either.left(ProcessDuelError.DuelIsFinished.INSTANCE);
+                    }
+                    returnMoneyToInitiator(duel.id());
+                    duelDao.updateStatus(duel.id(), DuelStatus.CANCELED);
+                    return Either.right(Success.INSTANCE);
+                }
+        ).fold(
+                _ -> Either.left(ProcessDuelError.DuelLocked.INSTANCE),
+                either -> either
+        );
+    }
+
     public Either<ProcessDuelError, DuelResult> finishDuel(Duel duel, PersonageId acceptor) {
         if (!acceptor.equals(duel.acceptingPersonageId())) {
             return Either.left(ProcessDuelError.NotDuelAcceptor.INSTANCE);

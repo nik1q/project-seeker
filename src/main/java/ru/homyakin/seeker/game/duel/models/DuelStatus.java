@@ -9,7 +9,8 @@ public enum DuelStatus {
     WAITING(0),
     DECLINED(1),
     EXPIRED(2),
-    FINISHED(3);
+    FINISHED(3),
+    CANCELED(4);
 
     private final int id;
 

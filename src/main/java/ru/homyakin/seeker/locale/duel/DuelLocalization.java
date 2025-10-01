@@ -97,6 +97,15 @@ public class DuelLocalization {
         );
     }
 
+    public static String duelCanceledByInitiator(Language language, PersonageMention acceptorMention) {
+        final var params = new HashMap<String, Object>();
+        params.put("mention_acceptor_icon_with_name", acceptorMention.value());
+        return StringNamedTemplate.format(
+                resources.getOrDefaultRandom(language, DuelResource::duelCanceledByInitiator),
+                params
+        );
+    }
+
     public static String finishedDuel(Language language, PersonageMention winnerMention, PersonageMention loserMention) {
         final var params = new HashMap<String, Object>();
         params.put("mention_winner_icon_with_name", winnerMention.value());

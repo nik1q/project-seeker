@@ -6,4 +6,6 @@ public sealed interface ProcessDuelError {
     enum DuelIsFinished implements ProcessDuelError { INSTANCE }
 
     enum NotDuelAcceptor implements ProcessDuelError { INSTANCE }
+
+    enum NotDuelInitiator implements ProcessDuelError { INSTANCE }
 }

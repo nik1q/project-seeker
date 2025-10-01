@@ -61,6 +61,12 @@ public abstract class ProcessDuelExecutor<T extends ProcessDuel> extends Command
                                 DuelLocalization.notDuelAcceptingPersonage(group.language())
                             )
                         );
+                        case ProcessDuelError.NotDuelInitiator notDuelInitiator -> telegramSender.send(
+                                TelegramMethods.createAnswerCallbackQuery(
+                                        command.callbackId(),
+                                        DuelLocalization.notDuelAcceptingPersonage(group.language())
+                                )
+                        );
                     }
                 }
             );

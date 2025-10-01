@@ -39,7 +39,14 @@ expiredDuel = [
 ]
 declinedDuel = [
     "Принимающая сторона отклонила вызов!",
-    "Ха! ${mention_initiator_icon_with_name}, ищи дурака для дуэли в другом месте!"
+    "Ха! ${mention_initiator_icon_with_name}, ищи дурака для дуэли в другом месте!",
+    "Сражаться с тобой, ${mention_initiator_icon_with_name}? Я сегодня не в настроении для лёгких побед.",
+    "${mention_initiator_icon_with_name}, я бы сразился, но боюсь, ты расплачешься, когда проиграешь."
+]
+duelCanceledByInitiator = [
+    "Инициатор отменил дуэль.",
+    "${mention_acceptor_icon_with_name}, можешь выдохнуть, дуэль отменена.",
+    "Кажется, у инициатора внезапно закончилась вся храбрость. Дуэль отменена."
 ]
 finishedDuel = [
     "Искатель ${mention_winner_icon_with_name} одержал верх над ${mention_loser_icon_with_name}",
